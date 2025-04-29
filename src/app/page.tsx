@@ -1,7 +1,13 @@
-import Image from "next/image";
+
+import { LocationSelector } from "./components/LocationSelector";
+import { LocationProvider } from "./context/location";
 
 export default function Home() {
   return (
-   <main>geloo</main>
+   <main>
+    <LocationProvider>
+    <LocationSelector/>
+    </LocationProvider>
+    </main>
   );
 }
