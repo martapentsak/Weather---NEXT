@@ -10,7 +10,7 @@ export const HomePage = () => {
         muted
         playsInline
       >
-        <source src={"/videos/cloudWeather.mp4"} type="video/mp4" />
+        <source src={"/videos/rain.mp4"} type="video/mp4" />
       </video>
       <main className="w-[85%] flex flex-col items-center justify-center p-[10px]">
         <div className="w-full flex items-center justify-end">
