@@ -10,17 +10,11 @@ import {
 } from "react";
 
 import cities from "../../../cities.json";
-
-export type Location = {
-  city: string;
-  country: string;
-  latitude: number,
-  longitude: number,
-};
+import { Location } from "../types";
 
 type ProviderValues = {
   location: Location | null;
-  handleChangeSelectedCity: (value: string | null) => void
+  handleChangeSelectedCity: (value: string | null) => void;
 };
 
 type Props = {
@@ -44,10 +38,7 @@ export const LocationProvider = ({ children }: Props) => {
       longitude: location.lng,
     };
     setLocation(newLocation);
-    localStorage.setItem(
-        locationStorageKey,
-        JSON.stringify(newLocation)
-      );
+    localStorage.setItem(locationStorageKey, JSON.stringify(newLocation));
   };
 
   useEffect(() => {
@@ -79,6 +70,7 @@ export const LocationProvider = ({ children }: Props) => {
         `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=93ff8c87416b2085fe5cb5665bf8658d`
       );
       const { name, country, lat, lon } = response.data[0];
+      console.log(lat, lon);
       const locationFromCoordinates = {
         city: name,
         country: country,
@@ -97,7 +89,7 @@ export const LocationProvider = ({ children }: Props) => {
 
   const providerValues: ProviderValues = {
     location,
-    handleChangeSelectedCity
+    handleChangeSelectedCity,
   };
 
   return (
