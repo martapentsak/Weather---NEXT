@@ -9,11 +9,11 @@ type Props = {
 export const WeatherCard = ({ title, icon, children }: Props) => {
   return (
     <div className="w-auto py-2 p bg-[rgba(49,114,178,0.8)] backdrop-blur-md border border-white/20 shadow-lg rounded-xl overflow-hidden">
-      <header className="flex items-center  text-[#6cb9ff] pl-2">
+      <header className="flex items-center text-[#6cb9ff] pl-2">
         <i className="mr-[5px]">{icon}</i>
-        <p className="uppercase text-[13px] ">{title}</p>
+        <p className="uppercase text-[13px]">{title}</p>
       </header>
-      <div className="p-[8px] flex items-center overflow-x-auto w-full scrollbar-hidden ">
+      <div className="p-[8px]">
         {children}
       </div>
     </div>
