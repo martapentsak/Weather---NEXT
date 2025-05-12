@@ -1,4 +1,5 @@
 "use client";
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -11,18 +12,16 @@ const locationStorageKey = "location";
 
 export const LocationSelector = () => {
   const [location, setLocation] = useState<Location | null>(null);
+  const [mounted, setMounted] = useState(false); // контроль першого рендера
 
-  if (!location) return null;
-
-  const { city, country } = location;
-
-  const formattedLocation = city + ", " + country;
+  const formatCityLabel = (location: Location) =>
+    `${location.city}, ${location.country}`;
 
   const handleChangeSelectedCity = async (value: string | null) => {
     if (!value) return;
-    const { city, country, lat, lng } = cities.find((v) =>
-      value.includes(v.city)
-    );
+    const cityObj = cities.find((v) => value.includes(v.city));
+    if (!cityObj) return;
+    const { city, country, lat, lng } = cityObj;
     const newLocation = {
       city,
       country,
@@ -33,15 +32,12 @@ export const LocationSelector = () => {
     localStorage.setItem(locationStorageKey, JSON.stringify(newLocation));
   };
 
-  async function getLocationFromCoordinates(
+  const getLocationFromCoordinates = async (
     latitude: number,
     longitude: number
-  ) {
-    const storedLocation = localStorage.getItem(locationStorageKey);
-    if (storedLocation) return;
+  ) => {
     try {
-      const response = await fetchLocationFromCoords(latitude, longitude);
-      const { name, country, lat, lon } = response;
+      const { name, country, lat, lon }  = await fetchLocationFromCoords(latitude, longitude);
       const locationFromCoordinates = {
         city: name,
         country,
@@ -54,35 +50,46 @@ export const LocationSelector = () => {
         JSON.stringify(locationFromCoordinates)
       );
     } catch (error) {
-      console.error("Failed to fetch city");
+      console.error("Failed to fetch city", error);
     }
-  }
+  };
 
   useEffect(() => {
-    const storedLocation = localStorage.getItem(locationStorageKey);
-    if (storedLocation) {
-      setLocation(JSON.parse(storedLocation));
-      return;
-    }
-    if (!navigator.geolocation) {
-      alert("Geolocation not supported");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition((position) => {
-      getLocationFromCoordinates(
-        position.coords.latitude,
-        position.coords.longitude
-      );
-    });
+    setMounted(true);
+    const initLocation = () => {
+      const stored = localStorage.getItem(locationStorageKey);
+      if (stored) {
+        setLocation(JSON.parse(stored));
+        return;
+      }
+
+      if (!navigator.geolocation) {
+        console.warn("Geolocation not supported");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition((pos) => {
+        getLocationFromCoordinates(
+          pos.coords.latitude,
+          pos.coords.longitude
+        );
+      });
+    };
+
+    initLocation();
   }, []);
+
+  if (!mounted) return null;
 
   return (
     <Autocomplete
-      value={location?.city ? formattedLocation : "Detecting city"}
+      value={
+        location ? formatCityLabel(location) : "Detecting location..."
+      }
       onChange={(_event: any, newValue: string | null) => {
         handleChangeSelectedCity(newValue);
       }}
-      options={cities.map((city) => `${city.city}, ${city.country}`)}
+      options={cities.map((city) => formatCityLabel(city))}
       sx={{ minWidth: 200, width: 300 }}
       renderInput={(params) => (
         <TextField {...params} sx={{ padding: "1px" }} />
