@@ -1,5 +1,6 @@
 import { HourlyWeatherContainer } from "./components/HourlyWeather";
 import { LocationSelector } from "./components/LocationSelector";
+import { WeeklyWeatherContainer } from "./components/WeeklyWeather";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
         <LocationSelector />
       </div>
       <HourlyWeatherContainer/>
+      <WeeklyWeatherContainer/>
     </main>
   </div>
   );
