@@ -7,12 +7,15 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 import cities from "../../../../cities.json";
 import { Location } from "../../types";
+import { useWeather } from "@/app/context/weather";
 
 const locationStorageKey = "location";
 
 export const LocationSelector = () => {
   const [location, setLocation] = useState<Location | null>(null);
-  const [mounted, setMounted] = useState(false); // контроль першого рендера
+  const [mounted, setMounted] = useState(false);
+
+  const { getHourlyWeather } = useWeather();
 
   const formatCityLabel = (location: Location) =>
     `${location.city}, ${location.country}`;
@@ -21,6 +24,7 @@ export const LocationSelector = () => {
     if (!value) return;
     const cityObj = cities.find((v) => value.includes(v.city));
     if (!cityObj) return;
+
     const { city, country, lat, lng } = cityObj;
     const newLocation = {
       city,
@@ -30,6 +34,7 @@ export const LocationSelector = () => {
     };
     setLocation(newLocation);
     localStorage.setItem(locationStorageKey, JSON.stringify(newLocation));
+    getHourlyWeather(newLocation);
   };
 
   const getLocationFromCoordinates = async (
@@ -37,7 +42,10 @@ export const LocationSelector = () => {
     longitude: number
   ) => {
     try {
-      const { name, country, lat, lon }  = await fetchLocationFromCoords(latitude, longitude);
+      const { name, country, lat, lon } = await fetchLocationFromCoords(
+        latitude,
+        longitude
+      );
       const locationFromCoordinates = {
         city: name,
         country,
@@ -49,6 +57,7 @@ export const LocationSelector = () => {
         locationStorageKey,
         JSON.stringify(locationFromCoordinates)
       );
+      getHourlyWeather(locationFromCoordinates);
     } catch (error) {
       console.error("Failed to fetch city", error);
     }
@@ -56,10 +65,13 @@ export const LocationSelector = () => {
 
   useEffect(() => {
     setMounted(true);
+
     const initLocation = () => {
-      const stored = localStorage.getItem(locationStorageKey);
-      if (stored) {
-        setLocation(JSON.parse(stored));
+      const storedLocation = localStorage.getItem(locationStorageKey);
+      if (storedLocation) {
+        const parsedStoredLocation = JSON.parse(storedLocation);
+        setLocation(parsedStoredLocation);
+        getHourlyWeather(parsedStoredLocation);
         return;
       }
 
@@ -69,10 +81,7 @@ export const LocationSelector = () => {
       }
 
       navigator.geolocation.getCurrentPosition((pos) => {
-        getLocationFromCoordinates(
-          pos.coords.latitude,
-          pos.coords.longitude
-        );
+        getLocationFromCoordinates(pos.coords.latitude, pos.coords.longitude);
       });
     };
 
@@ -83,9 +92,7 @@ export const LocationSelector = () => {
 
   return (
     <Autocomplete
-      value={
-        location ? formatCityLabel(location) : "Detecting location..."
-      }
+      value={location ? formatCityLabel(location) : "Detecting location..."}
       onChange={(_event: any, newValue: string | null) => {
         handleChangeSelectedCity(newValue);
       }}
@@ -100,7 +107,7 @@ export const LocationSelector = () => {
 
 async function fetchLocationFromCoords(latitude: number, longitude: number) {
   const response = await axios.get(
-    `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}`
+    `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${process.env.NEXT_PUBLIC_LOCATION_API}`
   );
   return response.data[0];
 }
