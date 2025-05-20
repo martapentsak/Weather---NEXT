@@ -5,7 +5,6 @@ import {
   ReactNode,
   createContext,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { Location } from "../types";
@@ -17,16 +16,36 @@ type HourlyWeatherResponse = {
     icon: string;
   };
 };
+type WeeklyWeatherResponse = {
+    date: string,
+    date_epoch: number,
+    day: {
+            mintemp_c: number,
+            maxtemp_c: number,
+            condition: { icon: string },
+          },
+}
 
 type HourlyWeather = Pick<HourlyWeatherResponse, "time"> & {
   temp: string;
   icon: string;
 };
 
+type WeeklyWeather =  Pick<WeeklyWeatherResponse, "day"> & {
+    minTemp: number;
+    maxTemp: number;
+    icon: string
+  };
+  
+
+
+
+
 type ProviderValues = {
   hourlyWeather: HourlyWeather[];
+  weeklyWeather: WeeklyWeather[],
   getHourlyWeather: (location: Location) => void;
-  fetchWeeklyWeather:  (location: Location) => void;
+  getWeeklyWeather:  (location: Location) => void;
 };
 
 type Props = {
@@ -37,12 +56,14 @@ export const WeatherContext = createContext({} as ProviderValues);
 
 export const WeatherProvider = ({ children }: Props) => {
   const [hourlyWeather, setHourlyWeather] = useState<HourlyWeather[]>([]);
+  const [weeklyWeather, setWeeklyWeather] = useState<WeeklyWeather[]>([]);
+
   const [loading, setLoading] = useState<boolean>(false);
 
   async function fetchHourlyWeather(location: Location) {
     setLoading(true);
     try {
-      const response = await axios.get(hourlyWeatherUrl(location, 2));
+      const response = await axios.get(getWeatherUrl(location, 2));
       return {
         forecast: response.data.forecast.forecastday,
         localTime: response.data.location.localtime,
@@ -53,20 +74,34 @@ export const WeatherProvider = ({ children }: Props) => {
   }
 
 
+  async function getWeeklyWeather(location: Location) {
+      const response = await axios.get(getWeatherUrl(location, 10))
+      const weather = response.data.forecast.forecastday.map(
+        ({
+          date,
+          date_epoch,
+          day: {
+            mintemp_c,
+            maxtemp_c,
+            condition: { icon },
+          },
+        }: WeeklyWeatherResponse, index: number) => {
+          const day = new Date(date_epoch * 1000).toLocaleDateString("en-US", { weekday: "long" }); //from 1746144000 to day like sunda
+          console.log()
 
-  async function fetchWeeklyWeather(location: Location) {
-    console.log("is wlirk")
-    console.log(hourlyWeatherUrl(location, 10))
-
-    setLoading(true);
-    try {
-      const response = await axios.get(hourlyWeatherUrl(location, 10));
-      console.log(response.data.forecast.forecastday)
-     
-    } finally {
-      setLoading(false);
+          return {
+            minTemp: Math.round(mintemp_c),
+            maxTemp: Math.round(maxtemp_c),
+            icon: `http:${icon}`,
+            day: index === 0 ? "Today" : day
+          };
+        }
+      );
+      console.log(weather)
+      setWeeklyWeather(weather)
     }
-  }
+  
+
 
   async function getHourlyWeather(location: Location) {
     const { forecast, localTime } = await fetchHourlyWeather(location);
@@ -96,16 +131,12 @@ export const WeatherProvider = ({ children }: Props) => {
   }
 
 
-  async function getWeeklyWeather (location: Location) {
-    const response = await fetchWeeklyWeather(location);
-
-  }
-
 
   const providerValues: ProviderValues = {
     hourlyWeather,
+    weeklyWeather,
     getHourlyWeather,
-    fetchWeeklyWeather
+    getWeeklyWeather
   };
 
   return (
@@ -123,7 +154,7 @@ export const useWeather = () => {
   return weathernContext;
 };
 
-const hourlyWeatherUrl = (location: Location, days: number) =>
+const getWeatherUrl = (location: Location, days: number) =>
   `https://api.weatherapi.com/v1/forecast.json?key=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}&q=${location.latitude},${location.longitude}&days=${days}&aqi=no&alerts=no`;
 
 

@@ -15,7 +15,7 @@ export const LocationSelector = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [mounted, setMounted] = useState(false);
 
-  const { getHourlyWeather, fetchWeeklyWeather } = useWeather();
+  const { getHourlyWeather, getWeeklyWeather } = useWeather();
 
   const formatCityLabel = (location: Location) =>
     `${location.city}, ${location.country}`;
@@ -58,7 +58,7 @@ export const LocationSelector = () => {
         JSON.stringify(locationFromCoordinates)
       );
       getHourlyWeather(locationFromCoordinates);
-      fetchWeeklyWeather(locationFromCoordinates)
+      getWeeklyWeather(locationFromCoordinates)
     } catch (error) {
       console.error("Failed to fetch city", error);
     }
@@ -73,7 +73,7 @@ export const LocationSelector = () => {
         const parsedStoredLocation = JSON.parse(storedLocation);
         setLocation(parsedStoredLocation);
         getHourlyWeather(parsedStoredLocation);
-        fetchWeeklyWeather(parsedStoredLocation)
+        getWeeklyWeather(parsedStoredLocation)
         return;
       }
 
