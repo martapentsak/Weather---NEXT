@@ -31,9 +31,10 @@ type HourlyWeather = Pick<HourlyWeatherResponse, "time"> & {
   icon: string;
 };
 
-type WeeklyWeather =  Pick<WeeklyWeatherResponse, "day"> & {
+type WeeklyWeather = {
     minTemp: number;
     maxTemp: number;
+    day: string,
     icon: string
   };
   
