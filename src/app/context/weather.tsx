@@ -26,6 +26,7 @@ type HourlyWeather = Pick<HourlyWeatherResponse, "time"> & {
 type ProviderValues = {
   hourlyWeather: HourlyWeather[];
   getHourlyWeather: (location: Location) => void;
+  fetchWeeklyWeather:  (location: Location) => void;
 };
 
 type Props = {
@@ -41,11 +42,27 @@ export const WeatherProvider = ({ children }: Props) => {
   async function fetchHourlyWeather(location: Location) {
     setLoading(true);
     try {
-      const response = await axios.get(hourlyWeatherUrl(location));
+      const response = await axios.get(hourlyWeatherUrl(location, 2));
       return {
         forecast: response.data.forecast.forecastday,
         localTime: response.data.location.localtime,
       };
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+
+  async function fetchWeeklyWeather(location: Location) {
+    console.log("is wlirk")
+    console.log(hourlyWeatherUrl(location, 10))
+
+    setLoading(true);
+    try {
+      const response = await axios.get(hourlyWeatherUrl(location, 10));
+      console.log(response.data.forecast.forecastday)
+     
     } finally {
       setLoading(false);
     }
@@ -78,9 +95,17 @@ export const WeatherProvider = ({ children }: Props) => {
     setHourlyWeather(hourlyWeather);
   }
 
+
+  async function getWeeklyWeather (location: Location) {
+    const response = await fetchWeeklyWeather(location);
+
+  }
+
+
   const providerValues: ProviderValues = {
     hourlyWeather,
     getHourlyWeather,
+    fetchWeeklyWeather
   };
 
   return (
@@ -89,7 +114,6 @@ export const WeatherProvider = ({ children }: Props) => {
     </WeatherContext.Provider>
   );
 };
-
 export const useWeather = () => {
   const weathernContext = useContext(WeatherContext);
 
@@ -99,5 +123,8 @@ export const useWeather = () => {
   return weathernContext;
 };
 
-const hourlyWeatherUrl = (location: Location) =>
-  `https://api.weatherapi.com/v1/forecast.json?key=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}&q=${location.latitude},${location.longitude}&days=2&aqi=no&alerts=no`;
+const hourlyWeatherUrl = (location: Location, days: number) =>
+  `https://api.weatherapi.com/v1/forecast.json?key=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}&q=${location.latitude},${location.longitude}&days=${days}&aqi=no&alerts=no`;
+
+
+
