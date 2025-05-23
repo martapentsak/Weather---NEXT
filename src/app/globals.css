@@ -1,2 +1,26 @@
 @import "tailwindcss";
 
+input[type="range"] {
+    @apply appearance-none w-full h-[3px] rounded-lg cursor-pointer;
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+  }
+  
+  input[type="range"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  /* Стиль повзунка для WebKit */
+  input[type="range"]::-webkit-slider-thumb {
+    @apply appearance-none w-[7px] h-[7px] bg-white rounded-full border-2 border-gray-200 cursor-pointer;
+    margin-top: 0px; /* Центрування повзунка по вертикалі */
+    position: relative;
+    z-index: 10;
+  }
+  
+  /* Для Firefox */
+  input[type="range"]::-moz-range-thumb {
+    @apply w-6 h-6 bg-white rounded-full border-2 border-gray-500 cursor-pointer;
+    position: relative;
+    z-index: 10;
+  }

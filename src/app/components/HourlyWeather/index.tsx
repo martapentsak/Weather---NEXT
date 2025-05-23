@@ -1,32 +1,11 @@
 "use client";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { WeatherCard } from "../WeatherCard";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import { Location } from "@/app/types";
+
+import { WeatherCard } from "../WeatherCard";
 import { useWeather } from "@/app/context/weather";
 
-type HourlyWeatherResponse = {
-  temp_c: number;
-  time: string;
-  condition: {
-    icon: string;
-  };
-};
-
-type HourlyWeather = Pick<HourlyWeatherResponse, "time"> & {
-  temp: string;
-  icon: string;
-};
-
-type Props = {
-  location: Location;
-};
-
-
-
 export const HourlyWeatherContainer = () => {
-    const {hourlyWeather} = useWeather()
+  const { hourlyWeather } = useWeather();
 
   return (
     <main className="w-full flex overflow-x-auto scrollbar-hidden">
@@ -34,8 +13,8 @@ export const HourlyWeatherContainer = () => {
         <div
           className="flex items-center overflow-x-scroll scrollbar-hidden"
           style={{
-            scrollbarWidth: "none", // Firefox
-            msOverflowStyle: "none", // IE/Edge
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
           }}
         >
           {hourlyWeather.map(({ time, icon, temp }, index) => (

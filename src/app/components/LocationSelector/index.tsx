@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -15,7 +14,7 @@ export const LocationSelector = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [mounted, setMounted] = useState(false);
 
-  const { getHourlyWeather, getWeeklyWeather } = useWeather();
+  const { fetchWeather } = useWeather();
 
   const formatCityLabel = (location: Location) =>
     `${location.city}, ${location.country}`;
@@ -24,17 +23,15 @@ export const LocationSelector = () => {
     if (!value) return;
     const cityObj = cities.find((v) => value.includes(v.city));
     if (!cityObj) return;
-
-    const { city, country, lat, lng } = cityObj;
     const newLocation = {
-      city,
-      country,
-      latitude: lat,
-      longitude: lng,
+      city: cityObj.city,
+      country: cityObj.country,
+      latitude: cityObj.lat,
+      longitude: cityObj.lng,
     };
     setLocation(newLocation);
     localStorage.setItem(locationStorageKey, JSON.stringify(newLocation));
-    getHourlyWeather(newLocation);
+    fetchWeather(newLocation);
   };
 
   const getLocationFromCoordinates = async (
@@ -42,23 +39,20 @@ export const LocationSelector = () => {
     longitude: number
   ) => {
     try {
-      const { name, country, lat, lon } = await fetchLocationFromCoords(
-        latitude,
-        longitude
-      );
+      const res = await fetch(`/api/location?lat=${latitude}&lon=${longitude}`);
+      if (!res.ok) throw new Error("Failed to fetch city");
+      const data = await res.json();
       const locationFromCoordinates = {
-        city: name,
-        country,
-        latitude: lat,
-        longitude: lon,
+        city: data.name,
+        country: data.country,
+        latitude: data.lat,
+        longitude: data.lon,
       };
       setLocation(locationFromCoordinates);
       localStorage.setItem(
         locationStorageKey,
         JSON.stringify(locationFromCoordinates)
       );
-      getHourlyWeather(locationFromCoordinates);
-      getWeeklyWeather(locationFromCoordinates)
     } catch (error) {
       console.error("Failed to fetch city", error);
     }
@@ -72,8 +66,7 @@ export const LocationSelector = () => {
       if (storedLocation) {
         const parsedStoredLocation = JSON.parse(storedLocation);
         setLocation(parsedStoredLocation);
-        getHourlyWeather(parsedStoredLocation);
-        getWeeklyWeather(parsedStoredLocation)
+        fetchWeather(parsedStoredLocation);
         return;
       }
 
@@ -81,7 +74,6 @@ export const LocationSelector = () => {
         console.warn("Geolocation not supported");
         return;
       }
-
       navigator.geolocation.getCurrentPosition((pos) => {
         getLocationFromCoordinates(pos.coords.latitude, pos.coords.longitude);
       });
@@ -106,10 +98,3 @@ export const LocationSelector = () => {
     />
   );
 };
-
-async function fetchLocationFromCoords(latitude: number, longitude: number) {
-  const response = await axios.get(
-    `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${process.env.NEXT_PUBLIC_LOCATION_API}`
-  );
-  return response.data[0];
-}
