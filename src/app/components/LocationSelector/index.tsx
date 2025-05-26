@@ -14,7 +14,7 @@ const locationStorageKey = "location";
 export const LocationSelector = () => {
   const [location, setLocation] = useState<Location | null>(null);
 
-  const { getHourlyWeather } = useWeather();
+  const { fetchWeather } = useWeather();
 
   const formatCityLabel = (location: Location) =>
     `${location.city}, ${location.country}`;
@@ -35,7 +35,7 @@ export const LocationSelector = () => {
       longitude: lng,
     };
     setLocation(newLocation);
-    getHourlyWeather(newLocation);
+    fetchWeather(newLocation);
     localStorage.setItem(locationStorageKey, JSON.stringify(newLocation));
   };
 
@@ -68,8 +68,7 @@ export const LocationSelector = () => {
       if (storedLocation) {
         const parsedStoredLocation = JSON.parse(storedLocation);
         setLocation(parsedStoredLocation);
-        getHourlyWeather(parsedStoredLocation);
-
+        fetchWeather(parsedStoredLocation);
         return;
       }
 
