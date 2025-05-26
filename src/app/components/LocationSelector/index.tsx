@@ -6,6 +6,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 import cities from "../../../../cities.json";
 import { Location } from "../../types";
+import axios from "axios";
 
 const locationStorageKey = "location";
 
@@ -23,11 +24,12 @@ export const LocationSelector = () => {
     if (!value) return;
     const cityObj = cities.find((v) => value.includes(v.city));
     if (!cityObj) return;
+    const { city, country, lat, lng } = cityObj;
     const newLocation = {
-      city: cityObj.city,
-      country: cityObj.country,
-      latitude: cityObj.lat,
-      longitude: cityObj.lng,
+      city,
+      country,
+      latitude: lat,
+      longitude: lng,
     };
     setLocation(newLocation);
     localStorage.setItem(locationStorageKey, JSON.stringify(newLocation));
@@ -38,13 +40,13 @@ export const LocationSelector = () => {
     longitude: number
   ) => {
     try {
-      const res = await fetch(`/api/location?lat=${latitude}&lon=${longitude}`);
-      const data = await res.json();
+      const res = await axios(`/api/location?lat=${latitude}&lon=${longitude}`);
+      const { name, country, lat, lon } = await res.data;
       const locationFromCoordinates = {
-        city: data.name,
-        country: data.country,
-        latitude: data.lat,
-        longitude: data.lon,
+        city: name,
+        country,
+        latitude: lat,
+        longitude: lon,
       };
       setLocation(locationFromCoordinates);
       localStorage.setItem(
