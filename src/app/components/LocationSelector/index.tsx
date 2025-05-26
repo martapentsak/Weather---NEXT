@@ -19,6 +19,10 @@ export const LocationSelector = () => {
   const formatCityLabel = (location: Location) =>
     `${location.city}, ${location.country}`;
 
+  const uniqueCities = Array.from(
+    new Map(cities.map((c) => [`${c.city},${c.country}`, c])).values()
+  );
+
   const handleChangeSelectedCity = async (value: string | null) => {
     if (!value) return;
     const cityObj = cities.find((v) => value.includes(v.city));
@@ -40,7 +44,6 @@ export const LocationSelector = () => {
   ) => {
     try {
       const res = await fetch(`/api/location?lat=${latitude}&lon=${longitude}`);
-      if (!res.ok) throw new Error("Failed to fetch city");
       const data = await res.json();
       const locationFromCoordinates = {
         city: data.name,
@@ -59,11 +62,12 @@ export const LocationSelector = () => {
   };
 
   useEffect(() => {
-    setMounted(true);
-
+    console.log("effect is wokrng");
     const initLocation = () => {
       const storedLocation = localStorage.getItem(locationStorageKey);
+      console.log(storedLocation);
       if (storedLocation) {
+        console.log("exist");
         const parsedStoredLocation = JSON.parse(storedLocation);
         setLocation(parsedStoredLocation);
         fetchWeather(parsedStoredLocation);
@@ -82,15 +86,13 @@ export const LocationSelector = () => {
     initLocation();
   }, []);
 
-  if (!mounted) return null;
-
   return (
     <Autocomplete
       value={location ? formatCityLabel(location) : "Detecting location..."}
       onChange={(_event: any, newValue: string | null) => {
         handleChangeSelectedCity(newValue);
       }}
-      options={cities.map((city) => formatCityLabel(city))}
+      options={uniqueCities.map((city) => formatCityLabel(city))}
       sx={{ minWidth: 200, width: 300 }}
       renderInput={(params) => (
         <TextField {...params} sx={{ padding: "1px" }} />
