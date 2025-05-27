@@ -1,7 +1,6 @@
 "use client";
-import { HourlyWeatherContainer } from "./components/HourlyWeather";
 import { LocationSelector } from "./components/LocationSelector";
-import { WeeklyWeatherContainer } from "./components/WeeklyWeather";
+
 
 export default function Home() {
   return (
@@ -10,14 +9,7 @@ export default function Home() {
         <div className="w-full flex items-center justify-end ">
           <LocationSelector />
         </div>
-        <div className="w-full">
-          <HourlyWeatherContainer />
-          <div className="w-full flex items-start mt-[10px] justify-between">
-            <div className="flex flex-col align-between">
-              <WeeklyWeatherContainer />
-            </div>
-          </div>
-        </div>
+     
       </main>
     </div>
   );
