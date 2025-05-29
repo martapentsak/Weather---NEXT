@@ -8,6 +8,7 @@ export const identifyVideoWeather = (condition: string) => {
   if (condition.toLowerCase().includes("rain")) return "/images/rain.jpg";
   if (condition.toLowerCase().includes("sun")) return "/images/sun.jpg";
   if (condition.toLowerCase().includes("cloud")) return "/images/cloud.jpg";
+  if (condition.toLowerCase().includes("clear")) return "/images/clear.jpg";
   return "/images/cloud.jpg";
 };
 
