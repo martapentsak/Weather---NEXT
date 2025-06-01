@@ -58,7 +58,7 @@ export default async function WeatherPage({ params }: { params: Params }) {
       />
       <main className="w-[70%] h-[95%] flex flex-col items-center  p-[10px] absolute">
         <div className="w-full flex items-center justify-end ">
-          <LocationSelector />
+          <LocationSelector initialCity={params.city} />
         </div>
         <div className="w-full flex flex-col items-center justify-center pb-[10px] text-white">
           <h2 className="text-[20px]">{cityName}</h2>
@@ -68,7 +68,7 @@ export default async function WeatherPage({ params }: { params: Params }) {
         <div className="w-full">
           <HourlyWeatherContainer forecast={hourlyWeather} />
           <div className="w-full flex items-start mt-[10px] justify-between">
-            <div className="flex flex-col align-between">
+            <div className="flex flex-col align-between w-[24%]">
               <WeeklyWeatherContainer forecast={weeklyWeather} />
               <div className="mt-[10px]">
                 <TodayWeatherCard
@@ -78,7 +78,7 @@ export default async function WeatherPage({ params }: { params: Params }) {
                 />
               </div>
             </div>
-            <div className="w-[73%] grid grid-cols-3 gap-[10px]">
+            <div className="w-[75%] grid grid-cols-3 gap-[10px]">
               {otherWeatheIndicator.map((todayWeatherInfo, index) => (
                 <TodayWeatherCard
                   key={index}

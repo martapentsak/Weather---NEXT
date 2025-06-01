@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-
 import cities from "../../../../cities.json";
-
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import Loading from "@/app/weather/[city]/loading";
 
 type Location = {
   city: string;
@@ -17,17 +16,22 @@ const uniqueCities = Array.from(
   new Map(cities.map((c) => [`${c.city},${c.country}`, c])).values()
 );
 
-export const LocationSelector = () => {
-  const params = useParams();
-  const { city, country } = uniqueCities.find(
-    (info) => info.city.toLowerCase() === params.city
-  )!;
-  const [location, setLocation] = useState<Location>({
-    city,
-    country,
-  });
+type Props = {
+  initialCity: string;
+};
 
+export const LocationSelector = ({ initialCity }: Props) => {
   const router = useRouter();
+  const [location, setLocation] = useState<Location | null>(null);
+
+  useEffect(() => {
+    const { city, country } = uniqueCities.find(
+      (info) => info.city.toLowerCase() === initialCity.toLowerCase()
+    );
+    if (city && country) {
+      setLocation({ city, country });
+    }
+  }, [initialCity]);
 
   const formatCityLabel = (location: Location) =>
     `${location.city}, ${location.country}`;
@@ -41,9 +45,16 @@ export const LocationSelector = () => {
     router.push(`/weather/${city.toLowerCase()}`);
   };
 
+  if (!location) {
+    console.log(location);
+    return <Loading />;
+  }
+
+  console.log();
+
   return (
     <Autocomplete
-      value={location ? formatCityLabel(location) : "Detecting location..."}
+      value={formatCityLabel(location)}
       onChange={(_event: any, newValue: string | null) => {
         handleChangeSelectedCity(newValue);
       }}

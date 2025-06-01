@@ -5,7 +5,7 @@ export const UvIndicator = ({ uv }: Props) => {
   const dangerLevel = uvDangerLevel.find(({ index }) => index >= uv)!;
   return (
     <div className="h-full flex flex-col">
-      <span className="font-bold text-[18px]">{dangerLevel.riskLevel}</span>
+      <span className="font-bold text-[14px]">{dangerLevel.riskLevel}</span>
       <input
         type="range"
         min="1"

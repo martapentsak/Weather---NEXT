@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+export const locationStorageKey = "locationCity"
+
 export default function Home() {
   const router = useRouter();
   
@@ -12,6 +14,7 @@ export default function Home() {
         const res = await fetch("https://ipapi.co/json/");
         const data = await res.json();
         const city = data.city?.toLowerCase()
+        localStorage.setItem(locationStorageKey, city)
         router.push(`/weather/${city}`);
       } catch (err) {
         console.error(err)

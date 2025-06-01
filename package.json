@@ -17,6 +17,7 @@
     "axios": "^1.9.0",
     "cookie": "^1.0.2",
     "js-cookie": "^3.0.5",
+    "lottie-react": "^2.4.1",
     "next": "15.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
