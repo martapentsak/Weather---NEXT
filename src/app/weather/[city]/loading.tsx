@@ -1,6 +1,7 @@
 "use client";
 import Lottie from "lottie-react";
 import weatherAnimation from "../../../../public/animation/loading.json";
+
 export default function Loading() {
   const defaultOptions = {
     loop: true,
