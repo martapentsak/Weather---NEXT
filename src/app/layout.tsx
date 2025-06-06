@@ -15,7 +15,17 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Weather Forecast",
   description: "Stay updated with the latest weather forecasts",
-  keywords: ["weather", "forecast", "climate", "temperature"],
+  keywords: [
+    "weather",
+    "forecast",
+    "climate",
+    "temperature",
+    "uv index",
+    "pressure",
+    "wind",
+    "humidity",
+    "precipitation",
+  ],
   icons: {
     icon: "https://icon-library.com/images/weather-icon-android/weather-icon-android-7.jpg",
   },

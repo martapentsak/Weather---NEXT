@@ -1,2 +1,27 @@
-@import "tailwindcss";
+@layer theme, base, mui, components, utilities;
+@import 'tailwindcss';
 
+/* tailwind-compatible class */
+.gauge-value-text {
+    @apply text-white;
+    font-size: 22px 
+  }
+  
+  @media (min-width: 640px) {
+    .gauge-value-text {
+      font-size: 1rem; /* sm:text-base */
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .gauge-value-text {
+      font-size: 1.25rem; /* md:text-lg */
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .gauge-value-text {
+      font-size: 30px
+    }
+  }
+  
