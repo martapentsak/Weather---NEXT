@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+const metadata = {
   title: "Weather Forecast",
   description: "Stay updated with the latest weather forecasts",
   keywords: [
