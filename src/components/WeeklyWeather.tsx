@@ -4,6 +4,7 @@ import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { WeatherCard } from "./WeatherCard";
 import { WeeklyWeather } from "@/lib/api";
+import Image from "next/image";
 
 type Props = {
   forecast: WeeklyWeather[];
@@ -19,11 +20,12 @@ export function WeeklyWeather({ forecast }: Props) {
             key={index}
           >
             <p className="text-white text-[11px] font-bold w-[30%]">{day}</p>
-            <div className="h-[40px] flex items-center justify-center pr-[20px]">
-              <img
+            <div className="h-[40px] flex items-center justify-center pr-[20px] w-[35px] relative">
+              <Image
                 src={icon}
-                className="w-[35px] h-auto"
+                fill
                 alt={`Icon for ${day}`}
+                style={{ objectFit: "contain" }}
               />
             </div>
             <div className="w-[35%] flex items-center justify-between">
