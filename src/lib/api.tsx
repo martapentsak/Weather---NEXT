@@ -1,4 +1,4 @@
-import { LocationInfo } from "@/types";
+import { Coordinates, LocationInfo } from "@/types";
 import axios from "axios";
 
 type HourlyWeatherResponse = {
@@ -10,7 +10,7 @@ type HourlyWeatherResponse = {
 };
 
 export type HourlyWeather = Pick<HourlyWeatherResponse, "time"> & {
-  temp: string;
+  temp: number;
   icon: string;
 };
 
@@ -31,6 +31,11 @@ type WeeklyWeatherResponse = {
   };
 };
 
+type UrlInfo = {
+  location: Coordinates;
+  days: number;
+};
+
 export type TodayWeather = {
   temp: number;
   wind: number;
@@ -44,7 +49,32 @@ export type TodayWeather = {
   precipitation: number;
 };
 
-const mapWeeklyForecast = (forecast: WeeklyWeatherResponse[]) => {
+const baseUrl = "https://api.weatherapi.com/v1/forecast.json";
+
+function buildLocationUrl(urlInfo: UrlInfo): string {
+  const {
+    location: { lat, lng },
+    days,
+  } = urlInfo;
+  const url = new URL(baseUrl);
+  url.searchParams.set("key", `${process.env.NEXT_PUBLIC_WEATHER_API_KEY}`);
+  url.searchParams.set("q", `${lat},${lng}`);
+  url.searchParams.set("days", `${days}`);
+  url.searchParams.set("aqi", "no");
+  url.searchParams.set("alerts", "no");
+  return url.toString();
+}
+
+async function fetchForecast(urlInfo: UrlInfo) {
+  try {
+    const response = await axios.get(buildLocationUrl(urlInfo));
+    return response.data;
+  } catch (error) {
+    console.error("fetchForecast", error);
+  }
+}
+
+function mapWeeklyForecast(forecast: WeeklyWeatherResponse[]) {
   return forecast.map(
     (
       {
@@ -57,31 +87,24 @@ const mapWeeklyForecast = (forecast: WeeklyWeatherResponse[]) => {
       }: WeeklyWeatherResponse,
       index: number
     ) => {
-      const day = new Date(date_epoch * 1000).toLocaleDateString("en-US", {
+      const dayName = new Date(date_epoch * 1000).toLocaleDateString("en-US", {
         weekday: "long",
       }); //from 1746144000 to day like sunday
       return {
         minTemp: Math.round(mintemp_c),
         maxTemp: Math.round(maxtemp_c),
         icon: `http:${icon}`,
-        day: index === 0 ? "Today" : day,
+        day: index === 0 ? "Today" : dayName,
       };
     }
   );
-};
+}
 
 export async function fetchWeeklyWeather(location: LocationInfo) {
   const {
     forecast: { forecastday },
-  } = await fetchForecast(location, 10);
+  } = await fetchForecast({ location, days: 10 });
   return mapWeeklyForecast(forecastday);
-}
-
-async function fetchForecast(location: LocationInfo, days: number) {
-  const response = await axios.get(
-    `https://api.weatherapi.com/v1/forecast.json?key=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}&q=${location.lat},${location.lng}&days=${days}&aqi=no&alerts=no`
-  );
-  return response.data;
 }
 
 export async function fetchHourlyForecast(
@@ -90,8 +113,8 @@ export async function fetchHourlyForecast(
   const {
     forecast: { forecastday },
     location: loc,
-  } = await fetchForecast(location, 2);
-  const nowHours = loc.localtime.slice(11, 13); //16:15 => 16
+  } = await fetchForecast({ location, days: 2 });
+  const nowHours = new Date(loc.localtime).getHours();
   const [today, tomorrow] = forecastday;
   const todayHourlyWeather = today.hour.slice(nowHours);
   const tommorowHourlyWeather = tomorrow.hour.slice(
@@ -100,17 +123,15 @@ export async function fetchHourlyForecast(
   );
   // The hourlyWeather array is created by combining today's remaining hours and the first hours of tomorrow, ensuring it always contains 24
   //   consecutive hours of forecast data starting from the current hour.
-  const hourlyWeather = todayHourlyWeather
-    .concat(tommorowHourlyWeather)
-    .map(
-      ({ temp_c, time, condition }: HourlyWeatherResponse, index: number) => {
-        return {
-          temp: Math.round(temp_c),
-          time: index === 0 ? "Now" : time.slice(11, 13),
-          icon: `https:${condition.icon}`,
-        };
-      }
-    );
+  const hourlyWeather = [...todayHourlyWeather, ...tommorowHourlyWeather].map(
+    ({ temp_c, time, condition }: HourlyWeatherResponse, index: number) => {
+      return {
+        temp: Math.round(temp_c),
+        time: index === 0 ? "Now" : time.slice(11, 13),
+        icon: `https:${condition.icon}`,
+      };
+    }
+  );
 
   return hourlyWeather;
 }
@@ -119,7 +140,7 @@ export async function fetchTodayWeather(location: LocationInfo) {
   const {
     forecast: { forecastday },
     location: loc,
-  } = await fetchForecast(location, 1);
+  } = await fetchForecast({ location, days: 1 });
   const nowHours = loc.localtime.slice(11, 13); //16:15 => 16
   const {
     temp_c,

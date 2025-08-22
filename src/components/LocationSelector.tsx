@@ -1,57 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useId } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import cities from "../../cities.json";
+
 import { useRouter } from "next/navigation";
-import Loading from "@/app/weather/[city]/loading";
-import { removeSpacesAndToLower } from "@/utils";
 import { LocationInfo } from "@/types";
+import { locationStorageKey } from "@/app/page";
+
+type Props = {
+  value: string;
+};
 
 type Location = Pick<LocationInfo, "city" | "country">;
 
-type Props = {
-  initialCity: string;
-};
-
-export const LocationSelector = ({ initialCity }: Props) => {
+export const LocationSelector = ({ value }: Props) => {
+  const id = useId();
   const router = useRouter();
-  const [location, setLocation] = useState<Location | null>(null);
 
-  useEffect(() => {
-    const { city, country } = cities.find(
-      (info) => removeSpacesAndToLower(info.city) === initialCity
-    );
-    if (city && country) {
-      setLocation({ city, country });
-    }
-  }, []);
+  const currentLocation = cities.find((v) => v.city === value)!;
 
-  const formatCityLabel = (location: Location) =>
-    `${location.city}, ${location.country}`;
-
-  const handleChangeSelectedCity = async (value: string | null) => {
+  const handleChangeSelectedCity = async (value: Location) => {
     if (!value) return;
-    const cityObj = cities.find((v) => value.includes(v.city));
-    if (!cityObj) return;
-    const { city, country } = cityObj;
-    setLocation({ city, country });
-    router.push(`/weather/${removeSpacesAndToLower(city)}`);
+    const { city } = cities.find((v) => value.city.includes(v.city))!;
+    localStorage.setItem(locationStorageKey, city);
+    router.push(`/weather/${city.toLowerCase()}`);
   };
-
-  if (!location) {
-    return <Loading />;
-  }
 
   return (
     <Autocomplete
-      value={location ? formatCityLabel(location) : "Detecting location"}
-      onChange={(_event: any, newValue: string | null) => {
-        handleChangeSelectedCity(newValue);
-      }}
-      options={cities.map((city) => formatCityLabel(city))}
-      getOptionKey={(option: string) => option + Math.random()}
+      value={currentLocation}
+      onChange={(_event, newValue) => handleChangeSelectedCity(newValue)}
+      getOptionKey={(option) => option.city + option.lat + id}
+      options={[...new Set(cities)]}
+      getOptionLabel={(option) => `${option.city}, ${option.country}`}
       sx={{ minWidth: 200, width: 300 }}
       renderInput={(params) => (
         <TextField {...params} sx={{ padding: "1px" }} />

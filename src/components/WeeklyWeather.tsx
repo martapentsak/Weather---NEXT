@@ -9,9 +9,9 @@ type Props = {
   forecast: WeeklyWeather[];
 };
 
-export function WeeklyWeatherContainer({ forecast }: Props) {
+export function WeeklyWeather({ forecast }: Props) {
   return (
-    <div className="flex overflow-x-auto scrollbar-hidden w-full">
+    <div className="flex overflow-x-auto scrollbar-hidden w-full max-h-[200px]">
       <WeatherCard title="10-day forecast" icon={<CalendarMonthIcon />}>
         {forecast.map(({ day, icon, minTemp, maxTemp }, index) => (
           <div

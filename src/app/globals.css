@@ -1,27 +1,20 @@
 @layer theme, base, mui, components, utilities;
 @import 'tailwindcss';
 
-/* tailwind-compatible class */
-.gauge-value-text {
-    @apply text-white;
-    font-size: 22px 
+
+  /* pressure-indicator*/
+  .css-1vrdpux text {
+    fill: white !important;
   }
-  
-  @media (min-width: 640px) {
-    .gauge-value-text {
-      font-size: 1rem; /* sm:text-base */
-    }
+
+  /* location selector*/
+  .css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input {
+    color: white !important;
   }
-  
-  @media (min-width: 768px) {
-    .gauge-value-text {
-      font-size: 1.25rem; /* md:text-lg */
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .gauge-value-text {
-      font-size: 30px
+
+  @media (min-width: 340px) {
+    .css-1vrdpux text {
+      font-size: 13px !important;
     }
   }
   

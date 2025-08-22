@@ -8,7 +8,7 @@ type Props = {
   forecast: HourlyWeather[];
 };
 
-export function HourlyWeatherContainer({ forecast }: Props) {
+export function HourlyWeather({ forecast }: Props) {
   return (
     <main className="w-full flex overflow-x-auto scrollbar-hidden">
       <WeatherCard title="Hourly" icon={<QueryBuilderIcon fontSize="small" />}>

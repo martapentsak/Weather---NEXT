@@ -4,30 +4,33 @@ import OpacityIcon from "@mui/icons-material/Opacity";
 import AirIcon from "@mui/icons-material/Air";
 
 import { TodayWeather } from "../lib/api";
+import { ReactElement } from "react";
+import { PressureIndicator } from "@/components/PressureIndicator";
 
-export const identifyVideoWeather = (condition: string) => {
-  if (condition.toLowerCase().includes("rain")) return "/images/rain.jpg";
-  if (condition.toLowerCase().includes("sun")) return "/images/sun.jpg";
-  if (condition.toLowerCase().includes("cloud")) return "/images/cloud.jpg";
-  if (condition.toLowerCase().includes("clear")) return "/images/clear.jpg";
-  return "/images/cloud.jpg";
+export const identifyPhotoWeather = (condition: string) => {
+  const commonConditions = ["rain", "sun", "cloud", "clear"];
+  const currentCondition = commonConditions.find((c) =>
+    condition.toLocaleLowerCase().includes(c)
+  );
+  console.log(currentCondition);
+  return `/images/${currentCondition || "cloud"}.jpg`;
 };
 
-const getVisibilityComment = (visibility: number): string => {
+const getVisibilityDescription = (visibility: number): string => {
   if (visibility >= 10) return "Excellent visibility – it's very clear.";
   if (visibility >= 5) return "Good visibility.";
   if (visibility >= 1) return "Moderate visibility – a bit hazy.";
   return "Low visibility – possibly foggy or misty.";
 };
 
-const getWindComment = (windSpeed: number): string => {
+const getWindDescription = (windSpeed: number): string => {
   if (windSpeed >= 50) return "Very strong wind – hold onto your hat!";
   if (windSpeed >= 20) return "Strong wind – noticeable when outside.";
   if (windSpeed >= 5) return "Light breeze – comfortable weather.";
   return "Calm – hardly any wind.";
 };
 
-const getHumidityComment = (humidity: number): string => {
+const getHumidityDescription = (humidity: number): string => {
   if (humidity < 30) return "Low humidity – air is dry.";
   if (humidity <= 60) return "Comfortable humidity.";
   if (humidity <= 80) return "High humidity – might feel sticky.";
@@ -42,7 +45,7 @@ const getPrecipitationDescription = (value: number): string => {
   return "Very heavy precipitation";
 };
 
-const getUvIndexDescription = (index: number): string => {
+export const getUvIndexDescription = (index: number): string => {
   if (index <= 2) return "No protection needed. Safe to be outside.";
   if (index <= 5)
     return "Protect your skin. Use sunscreen and wear a hat and sunglasses.";
@@ -50,55 +53,80 @@ const getUvIndexDescription = (index: number): string => {
     return "Avoid the sun around midday. Apply sunscreen regularly.";
   if (index <= 10)
     return "Take extra precautions. Limit time in the sun. Wear protective clothing.";
-  if (index <= 11)
-    return "Maximum protection required. Avoid being outside during peak sun hours.";
-  return "Maximum protection required. Avoid being outside during peak sun hours.";
+  if (index <= 11) return "Avoid being outside during peak sun hours.";
+  return "Avoid being outside during peak sun hours.";
 };
 
-export const otherWeatheIndicator = [
+type Indicators =
+  | "visibility"
+  | "feelsLike"
+  | "humidity"
+  | "precipitation"
+  | "wind"
+  | "pressure";
+
+type WeatherIndicators = Record<
+  Indicators,
   {
-    name: "visibility",
-    title: "visibility",
-    icon: <RemoveRedEyeIcon />,
-    getDescription: (todayWeather: TodayWeather) =>
-      getVisibilityComment(todayWeather.visibility),
+    title: string;
+    Icon: typeof RemoveRedEyeIcon;
+    component?: (value: number) => ReactElement;
+    getDescription?: (value: number) => string;
+  }
+>;
+
+export const weatherIndicators: WeatherIndicators = {
+  visibility: {
+    title: "Visibility",
+    Icon: RemoveRedEyeIcon,
+    getDescription: getVisibilityDescription,
   },
-  {
-    name: "feelsLike",
-    title: "feels like",
-    icon: <RemoveRedEyeIcon />,
-    getDescription: (todayWeather: TodayWeather) =>
-      getVisibilityComment(todayWeather.feelsLike),
+  feelsLike: {
+    title: "Feels like",
+    Icon: RemoveRedEyeIcon,
   },
-  {
-    name: "humidity",
-    title: "humidity",
-    icon: <OpacityIcon />,
-    getDescription: (todayWeather: TodayWeather) =>
-      getHumidityComment(todayWeather.humidity),
+  humidity: {
+    title: "Humidity",
+    Icon: OpacityIcon,
+    getDescription: getHumidityDescription,
   },
-  {
-    name: "precipitation",
-    title: "precipitation",
-    icon: <WaterDropIcon />,
-    getDescription: (todayWeather: TodayWeather) =>
-      getPrecipitationDescription(todayWeather.precipitation),
+  precipitation: {
+    title: "Precipitation",
+    Icon: WaterDropIcon,
+    getDescription: getPrecipitationDescription,
   },
-  {
-    name: "wind",
-    title: "wind",
-    icon: <AirIcon />,
-    getDescription: (todayWeather: TodayWeather) =>
-      getWindComment(todayWeather.wind),
+  wind: {
+    title: "Wind",
+    Icon: AirIcon,
+    getDescription: getWindDescription,
   },
-  {
-    name: "pressure",
-    title: "pressure",
-    icon: <WaterDropIcon />,
-    getDescription: (todayWeather: TodayWeather) =>
-      getPrecipitationDescription(todayWeather.precipitation),
+  pressure: {
+    title: "Pressure",
+    Icon: WaterDropIcon,
+    getDescription: getUvIndexDescription,
+    component: (value: number) => <PressureIndicator pressure={value} />,
   },
-];
+};
+
+const todayWeather = {} as TodayWeather;
+Object.entries(weatherIndicators).map(
+  ([indicator, { title, Icon, getDescription }]) => {
+    return (
+      <div>
+        <p>{`weatherCondition.${indicator}`}</p>
+        <p>{todayWeather[indicator as keyof TodayWeather]}</p>
+        {getDescription && (
+          <span>
+            {getDescription(
+              todayWeather[indicator as keyof TodayWeather] as number
+            )}
+          </span>
+        )}
+        <Icon style={{}} />
+      </div>
+    );
+  }
+);
 
 export const UvIndex = {
   name: "uv",
