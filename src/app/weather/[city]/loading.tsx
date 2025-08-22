@@ -9,7 +9,7 @@ export default function Loading() {
         loop
         autoplay
         animationData={weatherAnimation}
-        style={{ width: "60%", height: "60%" }}
+        style={{ width: "50%", height: "50%" }}
       />
     </div>
   );
