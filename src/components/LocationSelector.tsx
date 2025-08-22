@@ -7,7 +7,8 @@ import cities from "../../cities.json";
 
 import { useRouter } from "next/navigation";
 import { LocationInfo } from "@/types";
-import { locationStorageKey } from "@/app/page";
+import { locationStorageKey } from "@/constants/location";
+
 
 type Props = {
   value: string;

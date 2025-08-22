@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 
 import { Coordinates } from "@/types";
 import { buildLocationUrl } from "@/lib/location";
+import { locationStorageKey } from "@/constants/location";
 
-export const locationStorageKey = "location";
 
 export default function Home() {
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function Home() {
           getLocationFromCoordinates({ lat, lng })
       );
     })();
-  }, []);
+  }, [router]);
 
   return <div className="w-full h-full bg-black"></div>;
 }
