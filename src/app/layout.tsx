@@ -33,7 +33,6 @@ const metadata = {
     title: "Weather App",
     description: "Live weather forecast for your location",
     siteName: "Weather Forecast",
-    locale: "en_US",
     type: "website",
   },
 };
@@ -45,6 +44,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+        <meta name="keywords" content={metadata.keywords.join(", ")} />
+        <link rel="icon" href={metadata.icons.icon} />
+        <meta property="og:title" content={metadata.openGraph.title} />
+        <meta
+          property="og:description"
+          content={metadata.openGraph.description}
+        />
+        <meta property="og:site_name" content={metadata.openGraph.siteName} />
+        <meta property="og:type" content={metadata.openGraph.type} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

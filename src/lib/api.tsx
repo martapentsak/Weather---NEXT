@@ -6,12 +6,14 @@ type HourlyWeatherResponse = {
   time: string;
   condition: {
     icon: string;
+    text: string
   };
 };
 
 export type HourlyWeather = Pick<HourlyWeatherResponse, "time"> & {
   temp: number;
   icon: string;
+  condition: string
 };
 
 export type WeeklyWeather = {
@@ -68,6 +70,7 @@ function buildLocationUrl(urlInfo: UrlInfo): string {
 async function fetchForecast(urlInfo: UrlInfo) {
   try {
     const response = await axios.get(buildLocationUrl(urlInfo));
+    console.log(buildLocationUrl(urlInfo))
     return response.data;
   } catch (error) {
     console.error("fetchForecast", error);
@@ -129,6 +132,7 @@ export async function fetchHourlyForecast(
         temp: Math.round(temp_c),
         time: index === 0 ? "Now" : time.slice(11, 13),
         icon: `https:${condition.icon}`,
+        condition: condition.text
       };
     }
   );

@@ -12,7 +12,6 @@ export const identifyPhotoWeather = (condition: string) => {
   const currentCondition = commonConditions.find((c) =>
     condition.toLocaleLowerCase().includes(c)
   );
-  console.log(currentCondition);
   return `/images/${currentCondition || "cloud"}.jpg`;
 };
 
@@ -110,9 +109,9 @@ export const weatherIndicators: WeatherIndicators = {
 
 const todayWeather = {} as TodayWeather;
 Object.entries(weatherIndicators).map(
-  ([indicator, { title, Icon, getDescription }]) => {
+  ([indicator, {Icon, getDescription }]) => {
     return (
-      <div>
+      <div key={indicator}>
         <p>{`weatherCondition.${indicator}`}</p>
         <p>{todayWeather[indicator as keyof TodayWeather]}</p>
         {getDescription && (
@@ -122,7 +121,7 @@ Object.entries(weatherIndicators).map(
             )}
           </span>
         )}
-        <Icon style={{}} />
+        <Icon/>
       </div>
     );
   }
