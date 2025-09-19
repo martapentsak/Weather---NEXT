@@ -25,6 +25,8 @@ export default async function WeatherPage({ params }: {
   const { city } = await params;
   const decodedCity = decodeURIComponent(city)
 
+  console.log(process.env.NEXT_PUBLIC_LOCATION_API);
+
   if (!decodedCity) return <p>Invalid city</p>;
 
   const location = cities.find(

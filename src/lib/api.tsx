@@ -59,7 +59,7 @@ function buildLocationUrl(urlInfo: UrlInfo): string {
     days,
   } = urlInfo;
   const url = new URL(baseUrl);
-  url.searchParams.set("key", `${process.env.NEXT_PUBLIC_WEATHER_API_KEY}`);
+  url.searchParams.set("key", `${process.env.WEATHER_API_KEY}`);
   url.searchParams.set("q", `${lat},${lng}`);
   url.searchParams.set("days", `${days}`);
   url.searchParams.set("aqi", "no");
