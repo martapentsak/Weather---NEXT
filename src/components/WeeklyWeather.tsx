@@ -3,11 +3,11 @@
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { WeatherCard } from "./WeatherCard";
-import { WeeklyWeather } from "@/lib/api";
+import { WeeklyWeather as WeeklyWeatherType} from "@/lib/api";
 import Image from "next/image";
 
 type Props = {
-  forecast: WeeklyWeather[];
+  forecast: WeeklyWeatherType[];
 };
 
 export function WeeklyWeather({ forecast }: Props) {
