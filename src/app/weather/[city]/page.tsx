@@ -17,20 +17,18 @@ import { WeeklyWeather } from "@/components/WeeklyWeather";
 import { UvIndicator } from "@/components/UvIndexIndicator";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
-type WeatherPageParams = {
-  params: {
-    city: string;
-  };
-};
 
 
-export default async function WeatherPage({ params }: any) {
-  const city = decodeURIComponent(params.city);
+export default async function WeatherPage({ params }: {
+  params: Promise<{ city: string }>;
+}) {
+  const { city } = await params;
+  const decodedCity = decodeURIComponent(city)
 
-  if (!city) return <p>Invalid city</p>;
+  if (!decodedCity) return <p>Invalid city</p>;
 
   const location = cities.find(
-    (info) => info.city.toLowerCase() === city.toLowerCase()
+    (info) => info.city.toLowerCase() === decodedCity.toLowerCase()
   );
 
   if (!location) return <p>Invalid location</p>;

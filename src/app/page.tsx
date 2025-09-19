@@ -37,7 +37,7 @@ export default function Home() {
           getLocationFromCoordinates({ lat, lng })
       );
     })();
-  }, [getLocationFromCoordinates]);
+  }, [router]);
 
   return <div className="w-full h-full bg-black"></div>;
 }
