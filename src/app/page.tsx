@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { Coordinates } from "@/types";
@@ -12,7 +12,7 @@ import { locationStorageKey } from "@/constants/location";
 export default function Home() {
   const router = useRouter();
 
-  async function getLocationFromCoordinates(location: Coordinates) {
+  const getLocationFromCoordinates = useCallback(async (location: Coordinates) => {
     try {
       const response = await axios(buildLocationUrl(location));
       const { name: city } = response.data[0];
@@ -21,7 +21,7 @@ export default function Home() {
     } catch (error) {
       console.error("Failed to fetch city", error);
     }
-  }
+  }, [router]);
 
   useEffect(() => {
     const storedLocation = localStorage.getItem(locationStorageKey);
@@ -37,7 +37,7 @@ export default function Home() {
           getLocationFromCoordinates({ lat, lng })
       );
     })();
-  }, [router]);
+  }, [getLocationFromCoordinates]);
 
   return <div className="w-full h-full bg-black"></div>;
 }

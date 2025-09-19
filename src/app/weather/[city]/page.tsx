@@ -1,4 +1,3 @@
-//@ts-nocheck
 import Head from "next/head";
 import {
   fetchHourlyForecast,
@@ -17,6 +16,13 @@ import { HourlyWeather } from "@/components/HourlyWeather";
 import { WeeklyWeather } from "@/components/WeeklyWeather";
 import { UvIndicator } from "@/components/UvIndexIndicator";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+
+type WeatherPageParams = {
+  params: {
+    city: string;
+  };
+};
+
 
 export default async function WeatherPage({ params }: any) {
   const city = decodeURIComponent(params.city);
