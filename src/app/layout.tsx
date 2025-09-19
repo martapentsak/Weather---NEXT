@@ -27,7 +27,7 @@ const metadata = {
     "precipitation",
   ],
   icons: {
-    icon: "https://icon-library.com/images/weather-icon-android/weather-icon-android-7.jpg",
+    icon: "https://cdn.weatherapi.com/weather/64x64/day/176.png",
   },
   openGraph: {
     title: "Weather App",
