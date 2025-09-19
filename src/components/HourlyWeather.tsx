@@ -1,12 +1,12 @@
 "use client";
 
-import { HourlyWeather } from "@/lib/api";
+import  { HourlyWeather as HourlyWeatherType } from "@/lib/api";
 import { WeatherCard } from "./WeatherCard";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import Image from "next/image";
 
 type Props = {
-  forecast: HourlyWeather[];
+  forecast: HourlyWeatherType[];
 };
 
 export function HourlyWeather({ forecast }: Props) {
