@@ -19,12 +19,15 @@ import { WeeklyWeather } from "@/components/WeeklyWeather";
 import { UvIndicator } from "@/components/UvIndexIndicator";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
+type PageProps = {
+  params: {
+    city: string;
+  };
+};
 
-export default async function WeatherPage({
-  params,
-}: {
-  params: { city: string };
-}) {
+
+
+export default async function WeatherPage({ params }: PageProps) {
   const city = decodeURIComponent(params.city);
 
   if (!city) return <p>Invalid city</p>;
