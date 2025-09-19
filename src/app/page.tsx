@@ -20,6 +20,7 @@ export default function Home() {
       router.push(`/weather/${city.toLowerCase()}`);
     } catch (error) {
       console.error("Failed to fetch city", error);
+      router.push(`/weather/lviv`);
     }
   }, [router]);
 
