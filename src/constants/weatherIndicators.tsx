@@ -57,14 +57,6 @@ export const getUvIndexDescription = (index: number): string => {
   return "Avoid being outside during peak sun hours.";
 };
 
-type Indicators =
-  | "visibility"
-  | "feelsLike"
-  | "humidity"
-  | "precipitation"
-  | "wind"
-  | "pressure";
-
 type WeatherIndicator = {
   title: string;
   measurement: string;
