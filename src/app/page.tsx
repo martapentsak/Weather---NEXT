@@ -11,23 +11,25 @@ import { locationStorageKey } from "@/constants/location";
 export default function Home() {
   const router = useRouter();
 
-  const getLocationFromCoordinates = useCallback(async (location: Coordinates) => {
-    try {
-      const response = await axios(buildLocationUrl(location));
-      const city = response.data[0]?.name || "lviv";
-      if (typeof window !== "undefined") {
-        localStorage.setItem(locationStorageKey, city);
+  const getLocationFromCoordinates = useCallback(
+    async (location: Coordinates) => {
+      try {
+        const response = await axios(buildLocationUrl(location));
+        const city = response.data[0]?.name || "lviv";
+        if (typeof window !== "undefined") {
+          localStorage.setItem(locationStorageKey, city);
+        }
+        router.push(`/weather/${city.toLowerCase()}`);
+      } catch (error) {
+        console.error("Failed to fetch city", error);
+        router.push(`/weather/lviv`);
       }
-      router.push(`/weather/${city.toLowerCase()}`);
-    } catch (error) {
-      console.error("Failed to fetch city", error);
-      router.push(`/weather/lviv`);
-    }
-  }, [router]);
+    },
+    [router]
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-
     const storedLocation = localStorage.getItem(locationStorageKey);
     if (storedLocation) {
       router.push(`/weather/${storedLocation.toLowerCase()}`);

@@ -6,14 +6,14 @@ type HourlyWeatherResponse = {
   time: string;
   condition: {
     icon: string;
-    text: string
+    text: string;
   };
 };
 
 export type HourlyWeather = Pick<HourlyWeatherResponse, "time"> & {
   temp: number;
   icon: string;
-  condition: string
+  condition: string;
 };
 
 export type WeeklyWeather = {
@@ -70,7 +70,7 @@ function buildLocationUrl(urlInfo: UrlInfo): string {
 async function fetchForecast(urlInfo: UrlInfo) {
   try {
     const response = await axios.get(buildLocationUrl(urlInfo));
-    console.log(buildLocationUrl(urlInfo))
+    console.log(buildLocationUrl(urlInfo));
     return response.data;
   } catch (error) {
     console.error("fetchForecast", error);
@@ -92,6 +92,7 @@ function mapWeeklyForecast(forecast: WeeklyWeatherResponse[]) {
     ) => {
       const dayName = new Date(date_epoch * 1000).toLocaleDateString("en-US", {
         weekday: "long",
+        timeZone: "UTC",
       }); //from 1746144000 to day like sunday
       return {
         minTemp: Math.round(mintemp_c),
@@ -132,7 +133,7 @@ export async function fetchHourlyForecast(
         temp: Math.round(temp_c),
         time: index === 0 ? "Now" : time.slice(11, 13),
         icon: `https:${condition.icon}`,
-        condition: condition.text
+        condition: condition.text,
       };
     }
   );

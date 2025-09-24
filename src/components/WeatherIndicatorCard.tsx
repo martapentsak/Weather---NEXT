@@ -9,12 +9,14 @@ type Props = {
   icon: ReactElement;
   getDescription?: (value: number) => string;
   todayWeather: TodayWeather;
+  measurement?: string;
   component?: (value: number) => ReactElement;
 };
 
 export const WeatherIndicatorCard = ({
   title,
   icon,
+  measurement,
   indicator,
   component,
   todayWeather,
@@ -26,7 +28,7 @@ export const WeatherIndicatorCard = ({
       <div className="  w-full flex flex-col justify-between h-full text-white min-h-[80px] sm:min-h-[120px] ">
         <div className="h-full w-full flex flex-col justify-between">
           <span className="sm:text-[22px] lg:text-[28px]  text-white font-bold">
-            {currentValue}
+            {currentValue} {measurement}
           </span>
           {component && component(currentValue)}
           {getDescription && (
