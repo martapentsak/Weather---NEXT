@@ -1,20 +1,33 @@
-@layer theme, base, mui, components, utilities;
+@layer theme,
+base,
+mui,
+components,
+utilities;
 @import 'tailwindcss';
 
 
-  /* pressure-indicator*/
+/* pressure-indicator*/
+.css-1vrdpux text {
+  fill: white !important;
+}
+
+.MuiAutocomplete-root {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  border: none !important;
+}
+
+/* location selector*/
+.MuiOutlinedInput-input {
+  color: white !important;
+
+}
+
+@media (min-width: 340px) {
   .css-1vrdpux text {
-    fill: white !important;
+    font-size: 13px !important;
   }
-
-  /* location selector*/
-  .css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input {
-    color: white !important;
-  }
-
-  @media (min-width: 340px) {
-    .css-1vrdpux text {
-      font-size: 13px !important;
-    }
-  }
-  
+}

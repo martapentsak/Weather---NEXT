@@ -1,4 +1,5 @@
 import Head from "next/head";
+
 import {
   fetchHourlyForecast,
   fetchTodayWeather,
@@ -10,22 +11,21 @@ import {
   weatherIndicators,
 } from "@/constants/weatherIndicators";
 import cities from "../../../../cities.json";
-import { LocationSelector } from "@/components/LocationSelector";
-import { WeatherIndicatorCard } from "@/components/WeatherIndicatorCard";
+import Loading from "./loading";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { HourlyWeather } from "@/components/HourlyWeather";
 import { WeeklyWeather } from "@/components/WeeklyWeather";
 import { UvIndicator } from "@/components/UvIndexIndicator";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import { LocationSelector } from "@/components/LocationSelector";
+import { WeatherIndicatorCard } from "@/components/WeatherIndicatorCard";
 
-
-
-export default async function WeatherPage({ params }: {
+export default async function WeatherPage({
+  params,
+}: {
   params: Promise<{ city: string }>;
 }) {
   const { city } = await params;
-  const decodedCity = decodeURIComponent(city)
-
-  console.log(process.env.NEXT_PUBLIC_LOCATION_API);
+  const decodedCity = decodeURIComponent(city);
 
   if (!decodedCity) return <p>Invalid city</p>;
 
@@ -33,7 +33,7 @@ export default async function WeatherPage({ params }: {
     (info) => info.city.toLowerCase() === decodedCity.toLowerCase()
   );
 
-  if (!location) return <p>Invalid location</p>;
+  if (!location) return <Loading />;
 
   const [todayWeather, weeklyWeather, hourlyWeather] = await Promise.all([
     fetchTodayWeather(location),
@@ -48,18 +48,21 @@ export default async function WeatherPage({ params }: {
       className="w-full min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center"
       style={{ backgroundImage: `url(${identifyPhotoWeather(condition)})` }}
     >
-      <Head>
-        <title>Weather in {cityName}</title>
-        <meta
-          name="description"
-          content={`Get the latest forecast for ${cityName}.`}
-        />
-        <meta property="og:title" content={`Weather in ${cityName}`} />
-        <meta
-          property="og:description"
-          content={`Current weather and weekly forecast for ${cityName}.`}
-        />
-      </Head>
+      <>
+        <Head>
+          <title>Weather in {cityName}</title>
+          <meta
+            name="description"
+            content={`Get the latest forecast for ${cityName}.`}
+          />
+          <meta property="og:title" content={`Weather in ${cityName}`} />
+          <meta
+            property="og:description"
+            content={`Current weather and weekly forecast for ${cityName}.`}
+          />
+        </Head>
+      </>
+
       <main className="w-[85%] h-[95%] flex flex-col items-center  p-[10px] 2xl:w-[70%] sm:w-[80%]">
         <div className="w-full flex items-center justify-end mb-[20px]">
           <LocationSelector value={cityName} />
@@ -90,7 +93,10 @@ export default async function WeatherPage({ params }: {
             <div className="w-full mt-[10px] grid grid-cols-2 gap-[10px] mx-auto md:w-[60%] xl:w-[70%] xl:grid-cols-3 md:mt-[0px]">
               {Object.entries(weatherIndicators).map(
                 (
-                  [indicator, { Icon, title, getDescription, component }],
+                  [
+                    indicator,
+                    { Icon, title, getDescription, component, measurement },
+                  ],
                   index
                 ) => (
                   <WeatherIndicatorCard
@@ -98,6 +104,7 @@ export default async function WeatherPage({ params }: {
                     title={title}
                     component={component}
                     todayWeather={todayWeather}
+                    measurement={measurement}
                     indicator={indicator}
                     icon={<Icon />}
                     getDescription={getDescription}

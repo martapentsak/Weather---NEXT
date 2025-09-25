@@ -2,6 +2,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import OpacityIcon from "@mui/icons-material/Opacity";
 import AirIcon from "@mui/icons-material/Air";
+import DeviceThermostatIcon from "@mui/icons-material/DeviceThermostat";
 
 import { TodayWeather } from "../lib/api";
 import { ReactElement } from "react";
@@ -56,76 +57,53 @@ export const getUvIndexDescription = (index: number): string => {
   return "Avoid being outside during peak sun hours.";
 };
 
-type Indicators =
-  | "visibility"
-  | "feelsLike"
-  | "humidity"
-  | "precipitation"
-  | "wind"
-  | "pressure";
+type WeatherIndicator = {
+  title: string;
+  measurement: string;
+  Icon: typeof RemoveRedEyeIcon;
+  unit?: string;
+  component?: (value: number) => ReactElement;
+  getDescription?: (value: number) => string;
+};
 
-type WeatherIndicators = Record<
-  Indicators,
-  {
-    title: string;
-    Icon: typeof RemoveRedEyeIcon;
-    component?: (value: number) => ReactElement;
-    getDescription?: (value: number) => string;
-  }
->;
-
-export const weatherIndicators: WeatherIndicators = {
+export const weatherIndicators: Record<string, WeatherIndicator> = {
   visibility: {
     title: "Visibility",
-    Icon: RemoveRedEyeIcon,
+    Icon: DeviceThermostatIcon,
     getDescription: getVisibilityDescription,
+    measurement: "km",
   },
   feelsLike: {
     title: "Feels like",
     Icon: RemoveRedEyeIcon,
+    measurement: "°C",
   },
   humidity: {
     title: "Humidity",
     Icon: OpacityIcon,
     getDescription: getHumidityDescription,
+    measurement: "%",
   },
   precipitation: {
     title: "Precipitation",
     Icon: WaterDropIcon,
     getDescription: getPrecipitationDescription,
+    measurement: "mm",
   },
   wind: {
     title: "Wind",
     Icon: AirIcon,
     getDescription: getWindDescription,
+    measurement: "km/h",
   },
   pressure: {
     title: "Pressure",
     Icon: WaterDropIcon,
     getDescription: getUvIndexDescription,
     component: (value: number) => <PressureIndicator pressure={value} />,
+    measurement: "hPa",
   },
 };
-
-const todayWeather = {} as TodayWeather;
-Object.entries(weatherIndicators).map(
-  ([indicator, {Icon, getDescription }]) => {
-    return (
-      <div key={indicator}>
-        <p>{`weatherCondition.${indicator}`}</p>
-        <p>{todayWeather[indicator as keyof TodayWeather]}</p>
-        {getDescription && (
-          <span>
-            {getDescription(
-              todayWeather[indicator as keyof TodayWeather] as number
-            )}
-          </span>
-        )}
-        <Icon/>
-      </div>
-    );
-  }
-);
 
 export const UvIndex = {
   name: "uv",

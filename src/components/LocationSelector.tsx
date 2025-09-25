@@ -1,6 +1,5 @@
 "use client";
 
-import { useId } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import cities from "../../cities.json";
@@ -9,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { LocationInfo } from "@/types";
 import { locationStorageKey } from "@/constants/location";
 
-
 type Props = {
   value: string;
 };
@@ -17,12 +15,12 @@ type Props = {
 type Location = Pick<LocationInfo, "city" | "country">;
 
 export const LocationSelector = ({ value }: Props) => {
-  const id = useId();
   const router = useRouter();
 
   const currentLocation = cities.find((v) => v.city === value)!;
 
-  const handleChangeSelectedCity = async (value: Location) => {
+  const handleChangeSelectedCity = (value: Location) => {
+    console.log(value);
     if (!value) return;
     const { city } = cities.find((v) => value.city.includes(v.city))!;
     localStorage.setItem(locationStorageKey, city);
@@ -33,7 +31,7 @@ export const LocationSelector = ({ value }: Props) => {
     <Autocomplete
       value={currentLocation}
       onChange={(_event, newValue) => handleChangeSelectedCity(newValue)}
-      getOptionKey={(option) => option.city + option.lat + id}
+      getOptionKey={(option) => option.city + option.lat}
       options={[...new Set(cities)]}
       getOptionLabel={(option) => `${option.city}, ${option.country}`}
       sx={{ minWidth: 200, width: 300 }}
