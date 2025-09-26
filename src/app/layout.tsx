@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const metadata = {
+export const metadata = {
   title: "Weather Forecast",
   description: "Stay updated with the latest weather forecasts",
   keywords: [
@@ -44,19 +44,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <title>{metadata.title}</title>
-        <meta name="description" content={metadata.description} />
-        <meta name="keywords" content={metadata.keywords.join(", ")} />
-        <link rel="icon" href={metadata.icons.icon} />
-        <meta property="og:title" content={metadata.openGraph.title} />
-        <meta
-          property="og:description"
-          content={metadata.openGraph.description}
-        />
-        <meta property="og:site_name" content={metadata.openGraph.siteName} />
-        <meta property="og:type" content={metadata.openGraph.type} />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

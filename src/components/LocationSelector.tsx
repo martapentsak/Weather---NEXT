@@ -20,7 +20,6 @@ export const LocationSelector = ({ value }: Props) => {
   const currentLocation = cities.find((v) => v.city === value)!;
 
   const handleChangeSelectedCity = (value: Location) => {
-    console.log(value);
     if (!value) return;
     const { city } = cities.find((v) => value.city.includes(v.city))!;
     localStorage.setItem(locationStorageKey, city);
