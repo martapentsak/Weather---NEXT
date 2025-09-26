@@ -157,7 +157,6 @@ export async function fetchTodayWeather(location: LocationInfo) {
     precip_mm,
     condition: { text },
   } = forecastday[0].hour.slice(nowHours)[0]; //currentHourWeather
-  localStorage.setItem("weatherConsition", text);
   return {
     temp: Math.round(temp_c),
     wind: Math.round(wind_kph),
