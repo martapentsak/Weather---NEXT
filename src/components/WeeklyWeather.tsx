@@ -3,7 +3,7 @@
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { WeatherCard } from "./WeatherCard";
-import { WeeklyWeather as WeeklyWeatherType} from "@/lib/api";
+import { WeeklyWeather as WeeklyWeatherType } from "@/lib/api";
 import Image from "next/image";
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
 export function WeeklyWeather({ forecast }: Props) {
   return (
     <div className="flex overflow-x-auto scrollbar-hidden w-full max-h-[200px]">
-      <WeatherCard title="10-day forecast" icon={<CalendarMonthIcon />}>
+      <WeatherCard title="3-day forecast" icon={<CalendarMonthIcon />}>
         {forecast.map(({ day, icon, minTemp, maxTemp }, index) => (
           <div
             className="flex items-center justify-between pr-5 w-full"

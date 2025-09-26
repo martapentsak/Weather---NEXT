@@ -70,7 +70,6 @@ function buildLocationUrl(urlInfo: UrlInfo): string {
 async function fetchForecast(urlInfo: UrlInfo) {
   try {
     const response = await axios.get(buildLocationUrl(urlInfo));
-    console.log(buildLocationUrl(urlInfo));
     return response.data;
   } catch (error) {
     console.error("fetchForecast", error);
@@ -158,6 +157,7 @@ export async function fetchTodayWeather(location: LocationInfo) {
     precip_mm,
     condition: { text },
   } = forecastday[0].hour.slice(nowHours)[0]; //currentHourWeather
+  localStorage.setItem("weatherConsition", text);
   return {
     temp: Math.round(temp_c),
     wind: Math.round(wind_kph),
